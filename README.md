@@ -1,8 +1,7 @@
 # README
+Link to homework4 webpage: <https://usf-cs360-spring2020.github.io/homework4-alexziweiwang/>
 
-<https://usf-cs360-spring2020.github.io/template-bulma/>
-
-![Profile Image](profile.png)
+<img src="aw_pic.jpg" width="20%" height="20%">
 
 **Name:** Your Name  
 **Email:** <username@dons.usfca.edu>
