@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Homework 4: Hierarchical Data Visualization</title>
+
+    <!-- Load Bulma from CDN (consider saving it to repository instead) -->
+    <!-- https://bulma.io/ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+
+    <!-- Load Font Awesome 5 (free) icons -->
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  </head>
+
+  <body>
+
+  <!-- Page header -->
+  <!-- https://bulma.io/documentation/layout/hero/ -->
+  <section class="hero is-primary is-bold">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">Node Link Diagram</h1>
+        <h2 class="subtitle"></h2>
+      </div>
+    </div>
+  </section>
+  <!-- End page header -->
+
+  <!-- Page navigation -->
+  <!-- https://bulma.io/documentation/components/navbar/ -->
+  <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+    <div class="container">
+      <div class="navbar-brand">
+        <!-- TODO: Change link to repository homepage if needed -->
+        <!-- TODO: Change which navbar-item is-active if needed -->
+        <a class="navbar-item is-active" href="index.html">
+          <span class="icon"><i class="fas fa-home"></i></span>
+          <span>Home</span>
+        </a>
+
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="main-menu">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="main-menu" class="navbar-menu has-text-weight-medium">
+        <!-- Left navbar items -->
+        <div class="navbar-start">
+          <a class="navbar-item" href="#data" title="Data">
+            <span class="icon"><i class="fas fa-table"></i></span>
+            <span>Data</span>
+          </a>
+
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              Visualizations
+            </a>
+
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="node_link1.html">
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Node Link Diagram</span>
+              </a>
+
+              <hr class="navbar-divider">
+
+              <a class="navbar-item" href="space_filling2.html">
+                <span class="icon"><i class="fas fa-chart-area"></i></span>
+                <span>Space Filling Diagram</span>
+              </a>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Right navbar items -->
+        <div class="navbar-end">
+          <a class="navbar-item" href="#about" title="About">
+            <span class="icon"><i class="fas fa-tasks"></i></span>
+            <span>Grade</span>
+          </a>
+
+          <a class="navbar-item" href="aboutpage.html" title="About">
+            <span class="icon"><i class="fas fa-info-circle"></i></span>
+            <span>About</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <!-- End page navigation -->
+
+  <section class="section">
+    <div class="container">
+      <!-- Begin page content -->
+      <div class="content">
+        <h1 class="title">
+          <!-- TODO: Change page title -->
+          Page Title
+        </h1>
+        <p class="subtitle">
+          <!-- TODO: Change page subtitle -->
+          Page Subtitle
+        </p>
+
+        <p>This would be an excellent place to describe what this page is for, what to find in different sections, describe any motivation or theme behind your visualizations, and so on.</p>
+
+        <p>You should not use this template unless you intend to customize it. Make it your own. Keep in mind this simple template is over 300 lines! You can see other examples of websites using Bulma at their showcase: <a href="https://bulma.io/expo/">bulma.io/expo/</a>.</p>
+
+        <h2 id="data">Data</h2>
+
+        <p>Include some detailed information about the dataset here. You should <a href="#">add a link</a> to the original dataset. You might also want to quote the license:</p>
+
+        <blockquote>
+          <p>
+            "This data is made available under the Public Domain Dedication and License v1.0 whose full text can be found at: <a href="http://www.opendatacommons.org/licenses/pddl/1.0/">www.opendatacommons.org/licenses/pddl/1.0/</a>"
+          </p>
+          <cite>Put a citation here, possibly link to the dataset license information directly.</cite>
+        </blockquote>
+
+        <p>In addition to including a link to the source and license, you should describe the data. You might want a list of some sort to enumerate the different types of columns:</p>
+
+        <ol>
+          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>
+
+          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>
+
+          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>
+
+          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>
+        </ol>
+
+        <p>This will of course differ depending on the assignment and data.</p>
+
+        <h3 id="wrangling">Wrangling</h3>
+
+        <p>Perhaps you had to do some data wrangling to the original dataset to prepare it for visualization. This would be a great place to discuss some of that wrangling.
+
+        <pre>
+You can even put code into these pre blocks.
+  It will preserve whitespace.
+    That is helpful for formatted code.
+        </pre>
+
+        <h2 id="visualizations">Visualizations</h2>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <div id="d3nl"></div>
+
+        <script>
+        csv = "hw4dataset_orig.csv";
+
+        const width = 960;
+        const height = 500;
+        const pad = 15;
+        const r = 5;
+        color = d3.scaleSequential([0, 3], d3.interpolateViridis)
+
+        let countMap = [];
+        let divisions = ['Division2','Division3'];
+        let division2sBattalion = [1, 4, 5, 7, 8];
+        let count = 0;
+        let countArray = [];
+        let nodes = new Set();
+
+        countMap['root'] = {};
+        countMap['root']['name'] = 'root';
+        countMap['root']['parent'] = "";
+        countMap['root']['incidentCount'] = 0;
+        countMap['root']['leaves'] = 0;
+        nodes.add('root');
+
+        d3.csv(csv, countIncidents).then(makeHierarchy).then(nodeLink);
+
+        function countIncidents(row) {
+          stationName = row['StationArea'];
+          stationNum = parseInt(stationName, 10);
+
+          if(stationNum == 2 ||
+          stationNum == 13||
+          stationNum == 28||
+          stationNum == 41) {
+            battalionNum = 1;
+            divisionName = "Division2";
+          } else if(stationNum == 3 ||
+          stationNum == 16||
+          stationNum == 38||
+          stationNum == 51) {
+            battalionNum = 4;
+            divisionName = "Division2";
+          } else if(stationNum == 5 ||
+          stationNum == 10||
+          stationNum == 12||
+          stationNum == 21) {
+            battalionNum = 5;
+            divisionName = "Division2";
+          } else if(stationNum == 14 ||
+          stationNum == 22||
+          stationNum == 31||
+          stationNum == 34) {
+            battalionNum = 7;
+            divisionName = "Division2";
+          } else if(stationNum == 18 ||
+          stationNum == 20||
+          stationNum == 23||
+          stationNum == 40) {
+            battalionNum = 8;
+            divisionName = "Division2";
+          } else if(stationNum == 1 ||
+          stationNum == 6||
+          stationNum == 29||
+          stationNum == 36) {
+            battalionNum = 2;
+            divisionName = "Division3";
+          } else if(stationNum == 4 ||
+          stationNum == 8||
+          stationNum == 35||
+          stationNum == 48) {
+            battalionNum = 3;
+            divisionName = "Division3";
+          } else if(stationNum == 7 ||
+          stationNum == 11||
+          stationNum == 24||
+          stationNum == 26 ||
+          stationNum == 32) {
+            battalionNum = 6;
+            divisionName = "Division3";
+          } else if(stationNum == 15 ||
+          stationNum == 19||
+          stationNum == 33||
+          stationNum == 39 ||
+          stationNum == 43) {
+            battalionNum = 9;
+            divisionName = "Division3";
+          } else if(stationNum == 9 ||
+          stationNum == 17||
+          stationNum == 25||
+          stationNum == 37 ||
+          stationNum == 42 ||
+          stationNum == 44) {
+            battalionNum = 10;
+            divisionName = "Division3";
+          } else {
+            return countMap;
+          }
+
+          battalionLevelName = divisionName+".Battalion"+battalionNum;
+          entireName = divisionName+".Battalion"+battalionNum+".Station"+stationNum;
+
+          rootICount = countMap['root']['incidentCount'];
+          rootICount ++;
+          countMap['root']['incidentCount'] = rootICount;
+
+          if(countMap[divisionName]) {
+            iCount = countMap[divisionName]['incidentCount'];
+            iCount ++;
+            countMap[divisionName]['incidentCount'] = iCount;
+
+          } else {
+            countMap[divisionName] = {};
+            countMap[divisionName]['name'] = divisionName;
+            countMap[divisionName]['parent'] = 'root';
+            countMap[divisionName]['incidentCount'] = 1;
+            countMap[divisionName]['leaves'] = 0;
+            nodes.add(divisionName);
+          }
+
+
+          if(countMap[battalionLevelName]) {
+            iCount = countMap[battalionLevelName]['incidentCount'];
+            iCount ++;
+            countMap[battalionLevelName]['incidentCount'] = iCount;
+          } else {
+            countMap[battalionLevelName] = {};
+            countMap[battalionLevelName]['name'] = battalionLevelName;
+            countMap[battalionLevelName]['parent'] = divisionName;
+            countMap[battalionLevelName]['incidentCount'] = 1;
+            countMap[battalionLevelName]['leaves'] = 0;
+            nodes.add(battalionLevelName);
+          }
+
+          if(countMap[entireName]) {
+            iCount = countMap[entireName]['incidentCount'];
+            iCount ++;
+            countMap[entireName]['incidentCount'] = iCount;
+          } else {
+            countMap[entireName] = {};
+            countMap[entireName]['name'] = entireName;
+            countMap[entireName]['parent'] = battalionLevelName;
+            countMap[entireName]['incidentCount'] = 1;
+            countMap[entireName]['leaves'] = 1;
+
+            dleaves = countMap[divisionName]['leaves'];
+            dleaves ++;
+            countMap[divisionName]['leaves'] = dleaves;
+
+            bleaves = countMap[battalionLevelName]['leaves'];
+            bleaves ++;
+            countMap[battalionLevelName]['leaves'] = bleaves;
+
+            rootLeaves = countMap['root']['leaves'];
+            rootLeaves ++;
+            countMap['root']['leaves'] = rootLeaves;
+
+            nodes.add(entireName);
+          }
+          countArray.push(countMap);
+          return countMap;
+        }
+
+        function makeHierarchy(data) {
+          console.log(countMap);
+          console.log(nodes);
+          var array = [];
+          for(var k in countMap) {
+            currName = countMap[k]['name'];
+            array.push({
+            name : currName,
+            parent : countMap[k]['parent'],
+            incidentCount : countMap[k]['incidentCount'],
+            leaves : countMap[k]['leaves']
+            });
+          }
+          console.log(array);
+
+          root = d3.stratify()
+            .id(function(row) { return row.name; })
+            .parentId(function(row) {
+              return row.parent;
+            })
+          (array);
+          console.log(root);
+
+
+          return root;
+        }
+
+
+        function nodeLink(data) {
+          data.sort(function(a, b) {
+            return b.height - a.height || b.count - a.count;
+          });
+
+          let layout = d3.tree().size([width - 2 * pad, height - 2 * pad]);
+
+          layout(data);
+
+          let svg = d3.select('#d3nl').append('svg');
+          svg.style("width", width);
+          svg.style("height", height);
+
+          let plot = svg.append("g")
+            .attr("id", "plot")
+            .attr("transform", translate(pad, pad));
+
+            let line = d3.line()
+              .curve(d3.curveLinear)
+              .x(d => d.x)
+              .y(d => d.y);
+
+            let generator = function(node) {
+              return line([node.source, node.target]);
+            }
+          drawLinks(plot.append("g"), data.links(), generator);
+          drawNodes(plot.append("g"), data.descendants(), true);
+
+          return svg.node();
+        }
+
+        function drawLinks(g, links, generator) {
+          let paths = g.selectAll('path')
+            .data(links)
+            .enter()
+            .append('path')
+            .attr('d', generator)
+            .attr('class', 'link')
+            .style('stroke','orange');
+        }
+
+        function drawNodes(g, nodes, raise) {
+          let circles = g.selectAll('circle')
+            .data(nodes, node => node.data.name)
+            .enter()
+            .append('circle')
+              .attr('r', d => d.r ? d.r : r)
+              .attr('cx', d => d.x)
+              .attr('cy', d => d.y)
+              .attr('id', d => d.data.name)
+              .attr('class', 'node')
+              .style('fill', d => color(d.depth));
+
+          setupEvents(g, circles, raise);
+        }
+
+        function toCartesian(r, theta) {
+          return {
+            x: r * Math.cos(theta),
+            y: r * Math.sin(theta)
+          };
+        }
+
+        function showTooltip(g, node) {
+          let gbox = g.node().getBBox();     // get bounding box of group BEFORE adding text
+          let nbox = node.node().getBBox();  // get bounding box of node
+
+          // calculate shift amount
+          let dx = nbox.width / 2;
+          let dy = nbox.height / 2;
+
+          // retrieve node attributes (calculate middle point)
+          let x = nbox.x + dx;
+          let y = nbox.y + dy;
+
+          // get data for node
+          let datum = node.datum();
+
+          // remove "java.base." from the node name
+          let name = datum.data.name.replace("java\.base\.", "");
+
+          // use node name and total size as tooltip text
+          let text = `${name} (${numberFormat(datum.data.incidentCount)}, ${numberFormat(datum.data.leaves)}n)`;
+
+          // create tooltip
+          let tooltip = g.append('text')
+            .text(text)
+            .attr('x', x)
+            .attr('y', y)
+            .attr('dy', -dy - 4) // shift upward above circle
+            .attr('text-anchor', 'middle') // anchor in the middle
+            .attr('id', 'tooltip');
+
+          // it is possible the tooltip will fall off the edge of the
+          // plot area. we can detect when this happens, and set the
+          // text anchor appropriately
+
+          // get bounding box for the text
+          let tbox = tooltip.node().getBBox();
+
+          // if text will fall off left side, anchor at start
+          if (tbox.x < gbox.x) {
+            tooltip.attr('text-anchor', 'start');
+            tooltip.attr('dx', -dx); // nudge text over from center
+          }
+          // if text will fall off right side, anchor at end
+          else if ((tbox.x + tbox.width) > (gbox.x + gbox.width)) {
+            tooltip.attr('text-anchor', 'end');
+            tooltip.attr('dx', dx);
+          }
+
+          // if text will fall off top side, place below circle instead
+          if (tbox.y < gbox.y) {
+            tooltip.attr('dy', dy + tbox.height);
+          }
+        }
+
+        function setupEvents(g, selection, raise) {
+          selection.on('mouseover.highlight', function(d) {
+            // https://github.com/d3/d3-hierarchy#node_path
+            // returns path from d3.select(this) node to selection.data()[0] root node
+            let path = d3.select(this).datum().path(selection.data()[0]);
+
+            // select all of the nodes on the shortest path
+            let update = selection.data(path, node => node.data.name);
+
+            // highlight the selected nodes
+            update.classed('selected', true);
+
+            if (raise) {
+              update.raise();
+            }
+          });
+
+          selection.on('mouseout.highlight', function(d) {
+            let path = d3.select(this).datum().path(selection.data()[0]);
+            let update = selection.data(path, node => node.data.name);
+            update.classed('selected', false);
+          });
+
+          // show tooltip text on mouseover (hover)
+          selection.on('mouseover.tooltip', function(d) {
+            showTooltip(g, d3.select(this));
+          });
+
+          // remove tooltip text on mouseout
+          selection.on('mouseout.tooltip', function(d) {
+            g.select("#tooltip").remove();
+          });
+        }
+
+
+        function translate(x, y) {
+          return 'translate(' + x + ',' + y + ')';
+        }
+
+numberFormat = d3.format(".2~s");
+
+        </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <h4>Instructions</h4>
+
+        <p>You will likely need to include instructions on how to interpet and use the visualization. In the case above, if you click the three dots <i class="fas fa-ellipsis-h has-text-grey-light	"></i> above it will open a menu where you can either save the visualization to a SVG or PNG, or alternatively open it up in the online Vega Editor.</p>
+
+        <h4>Discussion</h4>
+
+        <p>You may also need other sections, like a discussion section, per-visualization section on data wrangling, and others. Because of the extra content and code visualizations take, it might be worthwhile to break up your pages into one home page and then one page per visualization.</p>
+
+        <span class="heading">Acknowledgements</span>
+
+        <p>
+          <a href="#">Link to insiration</a><br/>
+          <a href="#">Link to StackOverflow snippet</a>
+        </p>
+
+        <p class="is-6">
+          <em>Thanks to Person Name for their suggestion to do something with the visualization.</em>
+        </p>
+
+        <h2 id="grade">Grade</h2>
+
+        <!-- TODO: Remove custom style if no longer needed -->
+        <style>
+          table.grades tbody tr td:nth-child(1),
+          table.grades tbody tr td:nth-child(2) {
+            text-align: center;
+          }
+        </style>
+
+        <!-- TODO: Change or remove table -->
+        <!-- https://bulma.io/documentation/elements/table/ -->
+        <table class="table is-hoverable is-bordered grades">
+          <thead>
+            <tr>
+              <th>Letter</th>
+              <th>Done?</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>D</td>
+              <td><i class="has-text-success fas fa-check-circle"></i></td>
+              <td>Discussion of how this grade level was satisfied. Exactly how this section should look will depend on the assignment in question. There is no requirement for formatting in this way. This is just an example of what a table element might look like for this informaiton.</td>
+            </tr>
+
+            <tr>
+              <td>C</td>
+              <td><i class="has-text-success fas fa-check-circle"></i></td>
+              <td>Discussion of how this grade level was satisfied.</td>
+            </tr>
+
+            <tr>
+              <td>B</td>
+              <td><i class="has-text-success fas fa-check-circle"></i></td>
+              <td>Discussion of how this grade level was satisfied.</td>
+            </tr>
+
+            <tr>
+              <td>A</td>
+              <td><i class="has-text-success fas fa-check-circle"></i></td>
+              <td>Discussion of how this grade level was not satisfied.</td>
+            </tr>
+          </tbody>
+
+        </table>
+
+        <h2 id="about">About</h2>
+
+        <!-- Profile box -->
+                <!-- https://bulma.io/documentation/layout/media-object/ -->
+                <article class="media">
+                  <figure class="media-left">
+                    <p class="image is-128x128"><img class="is-rounded" src="aw_pic.jpg"></p>
+                  </figure>
+
+                  <div class="media-content">
+                    <div class="content">
+
+                      <p>
+                        <strong>Alex(Ziwei) Wang</strong><br/>
+                        CS Major, <a href="https://www.usfca.edu/">University of San Francisco</a><br/>
+                        <em>Expected Graduation: December 2020</em><br/>
+                        <i class="fas fa-envelope"></i> <a href="mailto:username@dons.usfca.edu">zwang114@dons.usfca.edu</a>
+                      </p>
+
+                      <p>
+                      Interested in Data visualization, Brain-Computer Interaction, Game development, and more.
+                      Dedicated to using technology to bring more convenience, safety and peace to the world. A Slytherin.
+                      </p>
+
+                      <!-- https://bulma.io/documentation/elements/tag/ -->
+                      <div class="heading">Skills</div>
+
+                      <div class="tags">
+                        <span class="tag">C</span>
+                        <span class="tag">Java</span>
+                        <span class="tag">Python</span>
+                        <span class="tag">Android development</span>
+                        <span class="tag">R</span>
+                        <span class="tag">Unity</span>
+                        <span class="tag">Assembly</span>
+                        <span class="tag">JavaScript</span>
+                        <span class="tag">HTML</span>
+                        <span class="tag">CSS</span>
+                        <span class="tag">SVG</span>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+                <!-- End profile box -->
+
+      </div>
+      <!-- End page content -->
+    </div>
+  </section>
+
+  <!-- Page footer -->
+  <!-- https://bulma.io/documentation/layout/footer/ -->
+  <footer class="footer">
+    <div class="content has-text-centered is-size-7">
+      <p>
+        <a href="#top">
+          <span class="fas fa-arrow-up"></span>
+          <span class="has-text-weight-medium">Back to Top</span>
+        </a>
+      </p>
+
+      <p>
+        <a href="https://github.com/usf-cs360-spring2020/homework4-alexziweiwang" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
+          <i class="fab fa-github-alt"></i>&nbsp;<strong>Github</strong>
+        </a>
+
+        <a href="https://fontawesome.com/" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
+          <i class="fab fa-font-awesome"></i>&nbsp;<strong>FontAwesome</strong>
+        </a>
+
+        <a href="https://bulma.io" class="button is-small">
+          <img src="https://bulma.io/images/made-with-bulma--semiblack.png" alt="Made with Bulma" width="128" height="24">
+        </a>
+      </p>
+    </div>
+  </footer>
+  <!-- End page footer -->
+
+  </body>
+
+</html>
