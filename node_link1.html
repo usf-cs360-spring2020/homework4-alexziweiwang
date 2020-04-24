@@ -167,6 +167,9 @@ You can even put code into these pre blocks.
         let count = 0;
         let countArray = [];
         let nodes = new Set();
+        let svg = d3.select('#d3nl').append('svg');
+        svg.style("width", width);
+        svg.style("height", height);
 
         countMap['Root'] = {};
         countMap['Root']['name'] = 'Root';
@@ -176,6 +179,7 @@ You can even put code into these pre blocks.
         nodes.add('Root');
 
         d3.csv(csv, countIncidents).then(makeHierarchy).then(cirtree);
+        drawColorLegend();
 
         function countIncidents(row) {
           stationName = row['StationArea'];
@@ -363,10 +367,6 @@ You can even put code into these pre blocks.
             node.y = point.y;
           });
 
-          let svg = d3.select('#d3nl').append('svg');
-          svg.style("width", width);
-          svg.style("height", height);
-
           let plot = svg.append("g")
             .attr("id", "plot")
             .attr("transform", translate(pad, pad));
@@ -417,6 +417,67 @@ You can even put code into these pre blocks.
           };
         }
 
+        function drawColorLegend() {
+          const legendWidth = 200;
+          const legendHeight = 20;
+
+          // place legend in its own group
+          const group = svg.append("g");
+          group.attr('id', 'color-legend');
+
+          // shift legend to appropriate position
+          group.attr('transform', translate(10, 50));
+
+          const title = group.append('text')
+            .attr('class', 'axis-title')
+            .text('Incident Count of Node');
+          title.attr('dx', 650);
+          title.attr('dy', 50);
+
+          const legendLabelMin = group.append('text')
+            .text('0')
+            .attr('dx', 620)
+            .attr('dy', 75);
+
+          const legendLabelMax = group.append('text')
+            .text('153000')
+            .attr('dx', 837)
+            .attr('dy', 75);
+
+          // lets draw the rectangle, but it won't have a fill just yet
+          const colorbox = group.append('rect')
+            .attr('x', 635)
+            .attr('y', 58)
+            .attr('width', legendWidth)
+            .attr('height', legendHeight);
+
+          // get the domain first (we do not want the middle value from the diverging scale)
+          const colorDomain = [d3.min(color.domain()), d3.max(color.domain())];
+
+          // add a new scale to go from color tick to percent
+          percent = d3.scaleLinear()
+            .range([0, 100])
+            .domain(colorDomain);
+
+          // we have to first add gradients
+          const defs = svg.append('defs');
+
+          // add a color stop per data tick
+          // input  (ticks)   : [0.2, ..., 100, ..., 200.3]
+          // output (percents): [  0, ..., 50, ..., 100]
+          defs.append('linearGradient')
+            .attr('id', 'gradient')
+            .selectAll('stop')
+            .data(color.ticks())
+            .enter()
+            .append('stop')
+            .attr('offset', d => percent(d) + '%')
+            .attr('stop-color', d => color(d));
+
+            // draw the color rectangle with the gradient
+            colorbox.attr('fill', 'url(#gradient)');
+        }
+
         function showTooltip(g, node) {
           let gbox = g.node().getBBox();     // get bounding box of group BEFORE adding text
           let nbox = node.node().getBBox();  // get bounding box of node
@@ -446,7 +507,8 @@ You can even put code into these pre blocks.
             .attr('y', y)
             .attr('dy', -dy - 4) // shift upward above circle
             .attr('text-anchor', 'middle') // anchor in the middle
-            .attr('id', 'tooltip');
+            .attr('id', 'tooltip')
+            .style('stroke','orange');
 
           // it is possible the tooltip will fall off the edge of the
           // plot area. we can detect when this happens, and set the
