@@ -156,8 +156,10 @@ You can even put code into these pre blocks.
         const width = 960;
         const height = 500;
         const pad = 15;
-        const r = 5;
-        color = d3.scaleSequential([0, 3], d3.interpolateViridis)
+        const r = 10;
+        const diameter = 500;
+        const color = d3.scaleSequential(d3.interpolateYlOrRd)
+        color.domain([0,38250,76500,114750,153000]);
 
         let countMap = [];
         let divisions = ['Division2','Division3'];
@@ -166,14 +168,14 @@ You can even put code into these pre blocks.
         let countArray = [];
         let nodes = new Set();
 
-        countMap['root'] = {};
-        countMap['root']['name'] = 'root';
-        countMap['root']['parent'] = "";
-        countMap['root']['incidentCount'] = 0;
-        countMap['root']['leaves'] = 0;
-        nodes.add('root');
+        countMap['Root'] = {};
+        countMap['Root']['name'] = 'Root';
+        countMap['Root']['parent'] = "";
+        countMap['Root']['incidentCount'] = 0;
+        countMap['Root']['leaves'] = 0;
+        nodes.add('Root');
 
-        d3.csv(csv, countIncidents).then(makeHierarchy).then(nodeLink);
+        d3.csv(csv, countIncidents).then(makeHierarchy).then(cirtree);
 
         function countIncidents(row) {
           stationName = row['StationArea'];
@@ -247,12 +249,14 @@ You can even put code into these pre blocks.
             return countMap;
           }
 
-          battalionLevelName = divisionName+".Battalion"+battalionNum;
-          entireName = divisionName+".Battalion"+battalionNum+".Station"+stationNum;
+        //  battalionLevelName = divisionName+".Battalion"+battalionNum;
+        //  entireName = divisionName+".Battalion"+battalionNum+".Station"+stationNum;
+        battalionLevelName = "Battalion"+battalionNum;
+        entireName = "Station"+stationNum;
 
-          rootICount = countMap['root']['incidentCount'];
+          rootICount = countMap['Root']['incidentCount'];
           rootICount ++;
-          countMap['root']['incidentCount'] = rootICount;
+          countMap['Root']['incidentCount'] = rootICount;
 
           if(countMap[divisionName]) {
             iCount = countMap[divisionName]['incidentCount'];
@@ -262,7 +266,7 @@ You can even put code into these pre blocks.
           } else {
             countMap[divisionName] = {};
             countMap[divisionName]['name'] = divisionName;
-            countMap[divisionName]['parent'] = 'root';
+            countMap[divisionName]['parent'] = 'Root';
             countMap[divisionName]['incidentCount'] = 1;
             countMap[divisionName]['leaves'] = 0;
             nodes.add(divisionName);
@@ -301,9 +305,9 @@ You can even put code into these pre blocks.
             bleaves ++;
             countMap[battalionLevelName]['leaves'] = bleaves;
 
-            rootLeaves = countMap['root']['leaves'];
+            rootLeaves = countMap['Root']['leaves'];
             rootLeaves ++;
-            countMap['root']['leaves'] = rootLeaves;
+            countMap['Root']['leaves'] = rootLeaves;
 
             nodes.add(entireName);
           }
@@ -323,6 +327,8 @@ You can even put code into these pre blocks.
             incidentCount : countMap[k]['incidentCount'],
             leaves : countMap[k]['leaves']
             });
+
+
           }
           console.log(array);
 
@@ -339,14 +345,23 @@ You can even put code into these pre blocks.
         }
 
 
-        function nodeLink(data) {
+        function cirtree(data) {
           data.sort(function(a, b) {
             return b.height - a.height || b.count - a.count;
           });
 
-          let layout = d3.tree().size([width - 2 * pad, height - 2 * pad]);
+          let layout = d3.tree().size([2 * Math.PI, (diameter / 2) - pad]);
 
           layout(data);
+
+          data.each(function(node) {
+            node.theta = node.x;
+            node.radial = node.y;
+
+            var point = toCartesian(node.radial, node.theta);
+            node.x = point.x;
+            node.y = point.y;
+          });
 
           let svg = d3.select('#d3nl').append('svg');
           svg.style("width", width);
@@ -356,17 +371,17 @@ You can even put code into these pre blocks.
             .attr("id", "plot")
             .attr("transform", translate(pad, pad));
 
-            let line = d3.line()
-              .curve(d3.curveLinear)
-              .x(d => d.x)
-              .y(d => d.y);
+          let line = d3.line()
+            .curve(d3.curveLinear)
+            .x(d => d.x + 360)
+            .y(d => d.y + 240);
 
-            let generator = function(node) {
-              return line([node.source, node.target]);
-            }
+          let generator = function(node) {
+            return line([node.source, node.target]);
+          }
+
           drawLinks(plot.append("g"), data.links(), generator);
           drawNodes(plot.append("g"), data.descendants(), true);
-
           return svg.node();
         }
 
@@ -375,9 +390,9 @@ You can even put code into these pre blocks.
             .data(links)
             .enter()
             .append('path')
-            .attr('d', generator)
-            .attr('class', 'link')
-            .style('stroke','orange');
+              .attr('d', generator)
+              .attr('class', 'link')
+              .style('stroke','orange');
         }
 
         function drawNodes(g, nodes, raise) {
@@ -385,12 +400,12 @@ You can even put code into these pre blocks.
             .data(nodes, node => node.data.name)
             .enter()
             .append('circle')
-              .attr('r', d => d.r ? d.r : r)
-              .attr('cx', d => d.x)
-              .attr('cy', d => d.y)
+              .attr('r', r)
+              .attr('cx', d => d.x + 360)
+              .attr('cy', d => d.y + 240)
               .attr('id', d => d.data.name)
               .attr('class', 'node')
-              .style('fill', d => color(d.depth));
+              .style('fill', d => color(d.data.incidentCount));
 
           setupEvents(g, circles, raise);
         }
@@ -420,8 +435,9 @@ You can even put code into these pre blocks.
           // remove "java.base." from the node name
           let name = datum.data.name.replace("java\.base\.", "");
 
+
           // use node name and total size as tooltip text
-          let text = `${name} (${numberFormat(datum.data.incidentCount)}, ${numberFormat(datum.data.leaves)}n)`;
+          let text = `${name} (Incident Count: ${numberFormat(datum.data.incidentCount)}, Leaves: ${numberFormat(datum.data.leaves)}, Parent: ${(datum.data.parent)})`;
 
           // create tooltip
           let tooltip = g.append('text')
@@ -495,7 +511,7 @@ You can even put code into these pre blocks.
           return 'translate(' + x + ',' + y + ')';
         }
 
-numberFormat = d3.format(".2~s");
+        numberFormat = d3.format(".3~s");
 
         </script>
 
