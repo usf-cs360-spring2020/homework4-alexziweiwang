@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Homework 4: Hierarchical Data Visualization</title>
+    <title>hw4: Node Link Diagram</title>
 
     <!-- Load Bulma from CDN (consider saving it to repository instead) -->
     <!-- https://bulma.io/ -->
@@ -24,7 +24,7 @@
     <div class="hero-body">
       <div class="container">
         <h1 class="title">Node Link Diagram</h1>
-        <h2 class="subtitle"></h2>
+        <h2 class="subtitle">Incident counts of each station, battalion and division</h2>
       </div>
     </div>
   </section>
@@ -89,17 +89,20 @@
       <!-- Begin page content -->
       <div class="content">
         <h1 class="title">
-          <!-- TODO: Change page title -->
-          Page Title
+          Incident counts of each station, battalion and division
         </h1>
         <p class="subtitle">
-          <!-- TODO: Change page subtitle -->
-          Page Subtitle
+          in Node Link Diagram
         </p>
 
-        <p>This would be an excellent place to describe what this page is for, what to find in different sections, describe any motivation or theme behind your visualizations, and so on.</p>
+        <h3>Encoding</h3>
+        <p> In this node link diagram, each node is a unit(either station, battalion or division) of SFFD, the innermost node is the root node which has two children, "division2" and "division3" as the upper level for this dataset. The division nodes have battalion nodes as children, and battalion nodes have station nodes as children.
+            Then the structure of division-battalion-station hierarchy would be clear in this data visualization. The color encodes the attribution of the node: incident count in that unit(either station, battalion or division). As shown on the legend, the more red-ish of a node, the more incident count it contains.</p>
 
-        <p>You should not use this template unless you intend to customize it. Make it your own. Keep in mind this simple template is over 300 lines! You can see other examples of websites using Bulma at their showcase: <a href="https://bulma.io/expo/">bulma.io/expo/</a>.</p>
+
+        <h3>Interactivity</h3>
+
+        <p> For this node link diagram, hover a node to see the detailed information such as incident count of that division/battalion/station, and how many leaves are there for that node. </p>
 
         <h2 id="visualizations">Visualizations</h2>
         <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -456,7 +459,7 @@
 
 
           // use node name and total size as tooltip text
-          let text = `${name} (Incident Count: ${numberFormat(datum.data.incidentCount)}, Leaves: ${numberFormat(datum.data.leaves)}, Parent: ${(datum.data.parent)})`;
+          let text = `${name} (Incident Count: ${numberFormat(datum.data.incidentCount)}, Leaves: ${numberFormat(datum.data.leaves)})`;
 
           // create tooltip
           let tooltip = g.append('text')
@@ -554,24 +557,22 @@
 
 
 
-        <h4>Instructions</h4>
+        <h3>Wrangling</h3>
 
-        <p>You will likely need to include instructions on how to interpet and use the visualization. In the case above, if you click the three dots <i class="fas fa-ellipsis-h has-text-grey-light	"></i> above it will open a menu where you can either save the visualization to a SVG or PNG, or alternatively open it up in the online Vega Editor.</p>
+        <h3>Conclusion</h3>
+        <p> The incident count differences are really large between that of station with most incidents count(19.5k) and that of station with least incident count(725), even if they are at the same level in the hierarchy, and similar phenomenon shows up at the level of battalions, so there could be a potential improvement on resource deployment for SFFD.</p>
 
-        <h4>Discussion</h4>
+        <h3>Attribution</h3>
 
-        <p>You may also need other sections, like a discussion section, per-visualization section on data wrangling, and others. Because of the extra content and code visualizations take, it might be worthwhile to break up your pages into one home page and then one page per visualization.</p>
-
-        <span class="heading">Acknowledgements</span>
+        <span class="heading">Inspirations</span>
 
         <p>
-          <a href="#">Link to insiration</a><br/>
-          <a href="#">Link to StackOverflow snippet</a>
+          <a href="https://observablehq.com/@sjengle/java-11-api-hierarchy-data-wrangling"> Example of Java11: wrangling to hierarchy data</a><br/>
+          <a href="https://observablehq.com/@sjengle/java-11-api-hierarchy-visualization"> Example of Java11: visualization to hierarchy data</a><br/>
+          <a href="https://sf-fire.org/fire-station-locations">Fire Station Locations & Division and Battalion Stations at sf-fire.org</a><br/>
+
         </p>
 
-        <p class="is-6">
-          <em>Thanks to Person Name for their suggestion to do something with the visualization.</em>
-        </p>
 
       </div>
       <!-- End page content -->
