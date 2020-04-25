@@ -87,17 +87,20 @@
       <!-- Begin page content -->
       <div class="content">
         <h1 class="title">
-          <!-- TODO: Change page title -->
-          Page Title
+          Incident counts of each station, battalion and division
         </h1>
         <p class="subtitle">
-          <!-- TODO: Change page subtitle -->
-          Page Subtitle
+          in Space Filling Diagram
         </p>
 
-        <p>This would be an excellent place to describe what this page is for, what to find in different sections, describe any motivation or theme behind your visualizations, and so on.</p>
+        <h3>Encoding</h3>
+        <p> In this space filling diagram, each node/block is a unit(either station, battalion or division) of SFFD, the uppermost node is the root node which has two children, "division2" and "division3" as the upper level for this dataset. The division nodes have battalion nodes as children, and battalion nodes have station nodes as children.
+            Then the structure of division-battalion-station hierarchy would be clear as layer-by layer in this data visualization. The color encodes the attribution of the node: incident count in that unit(either station, battalion or division). As shown on the legend, the more red-ish of a node, the more incident count it contains.</p>
 
-        <p>You should not use this template unless you intend to customize it. Make it your own. Keep in mind this simple template is over 300 lines! You can see other examples of websites using Bulma at their showcase: <a href="https://bulma.io/expo/">bulma.io/expo/</a>.</p>
+
+        <h3>Interactivity</h3>
+        <p> For this space filling diagram, hover each node to see the detailed information such as incident count of that division/battalion/station, and how many leaves are there for that node.</p> <p>Also, there is a filter/zoom interactivity that when clicking on a certain node, the diagram would zoom in and only show that node and its descendants on the diagram. There would be a “back to parent level” button if the user would like to go back to the parent node after such zooming.</p>
+
 
         <h2 id="visualizations">Visualizations</h2>
         <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -595,9 +598,11 @@
 
 
 
-        <h4>Instructions</h4>
+        <h3>Wrangling</h3>
 
-        <p>You will likely need to include instructions on how to interpet and use the visualization. In the case above, if you click the three dots <i class="fas fa-ellipsis-h has-text-grey-light	"></i> above it will open a menu where you can either save the visualization to a SVG or PNG, or alternatively open it up in the online Vega Editor.</p>
+        <h3>Conclusion</h3>
+        <p> Battalions with more stations than other battalions do not necessarily handle more incidents in total, and battalions with the same number of stations(4, for sample) are not necessarily having close count of incidents. The distribution of incidents are really uneven among battalions and stations.</p>
+
 
         <h3>Attribution</h3>
 
