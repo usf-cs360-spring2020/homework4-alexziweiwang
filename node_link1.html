@@ -107,6 +107,9 @@
         <h2 id="visualizations">Visualizations</h2>
         <script src="https://d3js.org/d3.v5.min.js"></script>
         <div id="d3nl"></div>
+        <figcaption>
+          Source: <a href="https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3">Fire Department Calls for Service</a>
+        </figcaption>
 
         <script>
         csv = "hw4dataset_orig.csv";
@@ -324,6 +327,36 @@
             node.x = point.x;
             node.y = point.y;
           });
+          svg.append('text')
+            .text('Node Link Diagram:')
+            .attr("font-weight",700)
+            .attr("font-size",25)
+            .attr('dx', 0)
+            .attr('dy', 50);
+          svg.append('text')
+            .text('Incident counts of')
+            .attr("font-weight",700)
+            .attr("font-size",25)
+            .attr('dx', 10)
+            .attr('dy', 90);
+          svg.append('text')
+            .text('each station,')
+            .attr("font-weight",700)
+            .attr("font-size",25)
+            .attr('dx', 10)
+            .attr('dy', 120);
+          svg.append('text')
+            .text('battalion')
+            .attr("font-weight",700)
+            .attr("font-size",25)
+            .attr('dx', 10)
+            .attr('dy', 150);
+          svg.append('text')
+            .text('and division')
+            .attr("font-weight",700)
+            .attr("font-size",25)
+            .attr('dx', 10)
+            .attr('dy', 180);
 
           let plot = svg.append("g")
             .attr("id", "plot")
@@ -388,11 +421,7 @@
           // shift legend to appropriate position
           group.attr('transform', translate(10, 50));
 
-          const title = group.append('text')
-            .attr('class', 'axis-title')
-            .text('Incident Count of Node');
-          title.attr('dx', 710);
-          title.attr('dy', 50);
+
 
           const legendLabelMin = group.append('text')
             .text('0')
@@ -558,6 +587,18 @@
 
 
         <h3>Wrangling</h3>
+        <li> Use javascript to read each row in the .csv data file and use an Object array as a map, to record and count incident number for each station, battalion and division.</li>
+        <li> When recording into the map, manually encode the division-battalion-station structure from <a href="https://sf-fire.org/fire-station-locations">This webpage at sf-fire.org</a>.</li>
+        <li> Add "Root" node into the map for further hierarchy operations.</li>
+        <li> After recording incident counts, push all the information as nodes into an array like:
+      <pre>array.push({
+    name : currName,
+    parent : countMap[k]['parent'],
+    incidentCount : countMap[k]['incidentCount'],
+    leaves : countMap[k]['leaves']
+});</pre> </li>
+          <li>With <pre>d3.stratify()</pre>, the hierarchy would be ready.</li>
+        <li> Then further functions for hierarchy data could be applied, such as <pre>d3.tree()</pre></li>
 
         <h3>Conclusion</h3>
         <p> The incident count differences are really large between that of station with most incidents count(19.5k) and that of station with least incident count(725), even if they are at the same level in the hierarchy, and similar phenomenon shows up at the level of battalions, so there could be a potential improvement on resource deployment for SFFD.</p>
