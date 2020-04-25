@@ -62,14 +62,12 @@
 
             <div class="navbar-dropdown">
               <a class="navbar-item" href="node_link1.html">
-                <span class="icon"><i class="fas fa-chart-line"></i></span>
                 <span>Node Link Diagram</span>
               </a>
 
               <hr class="navbar-divider">
 
               <a class="navbar-item" href="space_filling2.html">
-                <span class="icon"><i class="fas fa-chart-area"></i></span>
                 <span>Space Filling Diagram</span>
               </a>
 
@@ -618,15 +616,11 @@
     incidentCount : countMap[k]['incidentCount'],
     leaves : countMap[k]['leaves']
 });</pre> </li>
-          <li>With <pre>d3.stratify()</pre>, the hierarchy would be ready.</li>
+          <li>With <pre>d3.stratify()</pre>the hierarchy would be ready.</li>
         <li> Then further functions for hierarchy data could be applied, such as <pre>d3.partition()</pre></li>
 
         <h3>Conclusion</h3>
-        <p> The incident count differences are really large between that of station with most incidents count(19.5k) and that of station with least incident count(725), even if they are at the same level in the hierarchy, and similar phenomenon shows up at the level of battalions, so there could be a potential improvement on resource deployment for SFFD.</p>
-
-
-        <h3>Conclusion</h3>
-        <p> Battalions with more stations than other battalions do not necessarily handle more incidents in total, and battalions with the same number of stations(4, for sample) are not necessarily having close count of incidents. The distribution of incidents are really uneven among battalions and stations.</p>
+        <p> Battalions with more stations than other battalions do not necessarily handle more incidents in total, and battalions with the same number of stations(4, for sample) are not necessarily having close count of incidents. The distribution of incidents are really uneven among all battalions, or among all stations.</p>
 
 
         <h3>Attribution</h3>
@@ -634,9 +628,9 @@
         <span class="heading">Inspirations</span>
 
         <p>
-          <a href="https://observablehq.com/@sjengle/java-11-api-hierarchy-data-wrangling"> Example of Java11: wrangling to hierarchy data</a><br/>
-          <a href="https://observablehq.com/@sjengle/java-11-api-hierarchy-visualization"> Example of Java11: visualization to hierarchy data</a><br/>
-          <a href="https://sf-fire.org/fire-station-locations">Fire Station Locations & Division and Battalion Stations at sf-fire.org</a><br/>
+          <a href="https://observablehq.com/@sjengle/java-11-api-hierarchy-data-wrangling" target = _blank> Example of Java11: wrangling to hierarchy data</a><br/>
+          <a href="https://observablehq.com/@sjengle/java-11-api-hierarchy-visualization" target = _blank> Example of Java11: visualization to hierarchy data</a><br/>
+          <a href="https://sf-fire.org/fire-station-locations" target = _blank>Fire Station Locations & Division and Battalion Stations at sf-fire.org</a><br/>
 
         </p>
 

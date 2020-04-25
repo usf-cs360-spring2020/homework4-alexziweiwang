@@ -63,14 +63,12 @@
 
             <div class="navbar-dropdown">
               <a class="navbar-item" href="node_link1.html">
-                <span class="icon"><i class="fas fa-chart-line"></i></span>
                 <span>Node Link Diagram</span>
               </a>
 
               <hr class="navbar-divider">
 
               <a class="navbar-item" href="space_filling2.html">
-                <span class="icon"><i class="fas fa-chart-area"></i></span>
                 <span>Space Filling Diagram</span>
               </a>
 
@@ -421,6 +419,11 @@
           // shift legend to appropriate position
           group.attr('transform', translate(10, 50));
 
+          const title = group.append('text')
+            .attr('class', 'axis-title')
+            .text('Incident Count of Node');
+          title.attr('dx', 710);
+          title.attr('dy', 50);
 
 
           const legendLabelMin = group.append('text')
@@ -597,7 +600,7 @@
     incidentCount : countMap[k]['incidentCount'],
     leaves : countMap[k]['leaves']
 });</pre> </li>
-          <li>With <pre>d3.stratify()</pre>, the hierarchy would be ready.</li>
+          <li>With <pre>d3.stratify()</pre>the hierarchy would be ready.</li>
         <li> Then further functions for hierarchy data could be applied, such as <pre>d3.tree()</pre></li>
 
         <h3>Conclusion</h3>
@@ -608,12 +611,11 @@
         <span class="heading">Inspirations</span>
 
         <p>
-          <a href="https://observablehq.com/@sjengle/java-11-api-hierarchy-data-wrangling"> Example of Java11: wrangling to hierarchy data</a><br/>
-          <a href="https://observablehq.com/@sjengle/java-11-api-hierarchy-visualization"> Example of Java11: visualization to hierarchy data</a><br/>
-          <a href="https://sf-fire.org/fire-station-locations">Fire Station Locations & Division and Battalion Stations at sf-fire.org</a><br/>
+          <a href="https://observablehq.com/@sjengle/java-11-api-hierarchy-data-wrangling" target = _blank> Example of Java11: wrangling to hierarchy data</a><br/>
+          <a href="https://observablehq.com/@sjengle/java-11-api-hierarchy-visualization" target = _blank> Example of Java11: visualization to hierarchy data</a><br/>
+          <a href="https://sf-fire.org/fire-station-locations" target = _blank>Fire Station Locations & Division and Battalion Stations at sf-fire.org</a><br/>
 
         </p>
-
 
       </div>
       <!-- End page content -->
