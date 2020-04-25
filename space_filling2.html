@@ -33,8 +33,7 @@
   <nav class="navbar is-light" role="navigation" aria-label="main navigation">
     <div class="container">
       <div class="navbar-brand">
-        <!-- TODO: Change link to repository homepage if needed -->
-        <!-- TODO: Change which navbar-item is-active if needed -->
+
         <a class="navbar-item is-active" href="index.html">
           <span class="icon"><i class="fas fa-home"></i></span>
           <span>Home</span>
@@ -146,47 +145,467 @@ You can even put code into these pre blocks.
     That is helpful for formatted code.
         </pre>
 
-        <p>You can alternatively embed a Gist if you want. There is an "embed" button on <a href="https://gist.github.com/octocat/6cad326836d38bd3a7ae">the Gist page</a> and results in something like this:</p>
-
-        <script src="https://gist.github.com/octocat/6cad326836d38bd3a7ae.js"></script>
-
         <h2 id="visualizations">Visualizations</h2>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <div id="d3nl"></div>
 
-        <p>Ideally not everything would be on a single page like this example. Instead, you might want to put each section in its own webpage. You would need to carefully replicate the page template (with the header, navbar, and footer) and make the necessary updates. For example, you want the "About" navbar item to be considered active on an "About" web page.</p>
+        <script>
+        csv = "hw4dataset_orig.csv";
 
-        <p>For now this is just a demo. The buttons below do not go anywhere, but can be easily changed to link to different visualization pages.</p>
+        const width = 1560;
+        const height = 900;
+        const pad = 15;
+        const r = 10;
+        const diameter = 500;
+        const color = d3.scaleSequential(d3.interpolateYlOrRd)
 
-        <p class="buttons">
-          <a class="button is-large is-success" href="node_link1.html">
-            <span class="icon is-medium">
-              <i class="fas fa-chart-line"></i>
-            </span>
-            <span>Node Link Diagram</span>
-          </a>
+        color.domain([0,38250,76500,114750,153000]);
 
-          <a class="button is-large is-primary" href="space_filling2.html">
-            <span class="icon is-medium">
-              <i class="fas fa-chart-area"></i>
-            </span>
-            <span>Space Filling Diagram</span>
-          </a>
-        </p>
+        let levelNum = 4;
 
-        <!-- https://github.com/vega/vega-embed#basic-example -->
-        <p>It is possible to embed some visualizations directly here too. Here is <a href="https://github.com/vega/vega-embed#basic-example">an example</a> using Vega-Lite:</p>
+        let countMap = [];
+        let divisions = ['Division2','Division3'];
+        let division2sBattalion = [1, 4, 5, 7, 8];
+        let count = 0;
+        let countArray = [];
+        let nodes = new Set();
+        let svg = d3.select('#d3nl').append('svg');
+        svg.attr("x", 0);
+        svg.attr("y", 0);
+        svg.style("width", width);
+        svg.style("height", height);
+/*        let plot = svg.append("g")
+          .attr("id", "plot")
+          .attr("transform", translate(pad, pad));
+        plot.style("width", 960);
+        plot.style("height",500);
+*/
+        countMap['Root'] = {};
+        countMap['Root']['name'] = 'Root';
+        countMap['Root']['parent'] = "";
+        countMap['Root']['incidentCount'] = 0;
+        countMap['Root']['leaves'] = 0;
+        nodes.add('Root');
 
-        <script src="https://cdn.jsdelivr.net/npm/vega@5.9.0"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vega-lite@4.0.2"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.2.1"></script>
+        d3.csv(csv, countIncidents).then(makeHierarchy).then(icicle);
+        drawColorLegend();
 
-        <div id="vis"></div>
+        function countIncidents(row) {
+          stationName = row['StationArea'];
+          stationNum = parseInt(stationName, 10);
 
-        <script type="text/javascript">
-        var spec = "https://raw.githubusercontent.com/vega/vega/master/docs/examples/bar-chart.vg.json";
-        vegaEmbed('#vis', spec).then(function(result) {
-          // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
-        }).catch(console.error);
+          if(stationNum == 2 ||
+          stationNum == 13||
+          stationNum == 28||
+          stationNum == 41) {
+            battalionNum = 1;
+            divisionName = "Division2";
+          } else if(stationNum == 3 ||
+          stationNum == 16||
+          stationNum == 38||
+          stationNum == 51) {
+            battalionNum = 4;
+            divisionName = "Division2";
+          } else if(stationNum == 5 ||
+          stationNum == 10||
+          stationNum == 12||
+          stationNum == 21) {
+            battalionNum = 5;
+            divisionName = "Division2";
+          } else if(stationNum == 14 ||
+          stationNum == 22||
+          stationNum == 31||
+          stationNum == 34) {
+            battalionNum = 7;
+            divisionName = "Division2";
+          } else if(stationNum == 18 ||
+          stationNum == 20||
+          stationNum == 23||
+          stationNum == 40) {
+            battalionNum = 8;
+            divisionName = "Division2";
+          } else if(stationNum == 1 ||
+          stationNum == 6||
+          stationNum == 29||
+          stationNum == 36) {
+            battalionNum = 2;
+            divisionName = "Division3";
+          } else if(stationNum == 4 ||
+          stationNum == 8||
+          stationNum == 35||
+          stationNum == 48) {
+            battalionNum = 3;
+            divisionName = "Division3";
+          } else if(stationNum == 7 ||
+          stationNum == 11||
+          stationNum == 24||
+          stationNum == 26 ||
+          stationNum == 32) {
+            battalionNum = 6;
+            divisionName = "Division3";
+          } else if(stationNum == 15 ||
+          stationNum == 19||
+          stationNum == 33||
+          stationNum == 39 ||
+          stationNum == 43) {
+            battalionNum = 9;
+            divisionName = "Division3";
+          } else if(stationNum == 9 ||
+          stationNum == 17||
+          stationNum == 25||
+          stationNum == 37 ||
+          stationNum == 42 ||
+          stationNum == 44) {
+            battalionNum = 10;
+            divisionName = "Division3";
+          } else {
+            return countMap;
+          }
+
+        //  battalionLevelName = divisionName+".Battalion"+battalionNum;
+        //  entireName = divisionName+".Battalion"+battalionNum+".Station"+stationNum;
+        battalionLevelName = "Battalion"+battalionNum;
+        entireName = "Station"+stationNum;
+
+          rootICount = countMap['Root']['incidentCount'];
+          rootICount ++;
+          countMap['Root']['incidentCount'] = rootICount;
+
+          if(countMap[divisionName]) {
+            iCount = countMap[divisionName]['incidentCount'];
+            iCount ++;
+            countMap[divisionName]['incidentCount'] = iCount;
+
+          } else {
+            countMap[divisionName] = {};
+            countMap[divisionName]['name'] = divisionName;
+            countMap[divisionName]['parent'] = 'Root';
+            countMap[divisionName]['incidentCount'] = 1;
+            countMap[divisionName]['leaves'] = 0;
+            nodes.add(divisionName);
+          }
+
+
+          if(countMap[battalionLevelName]) {
+            iCount = countMap[battalionLevelName]['incidentCount'];
+            iCount ++;
+            countMap[battalionLevelName]['incidentCount'] = iCount;
+          } else {
+            countMap[battalionLevelName] = {};
+            countMap[battalionLevelName]['name'] = battalionLevelName;
+            countMap[battalionLevelName]['parent'] = divisionName;
+            countMap[battalionLevelName]['incidentCount'] = 1;
+            countMap[battalionLevelName]['leaves'] = 0;
+            nodes.add(battalionLevelName);
+          }
+
+          if(countMap[entireName]) {
+            iCount = countMap[entireName]['incidentCount'];
+            iCount ++;
+            countMap[entireName]['incidentCount'] = iCount;
+          } else {
+            countMap[entireName] = {};
+            countMap[entireName]['name'] = entireName;
+            countMap[entireName]['parent'] = battalionLevelName;
+            countMap[entireName]['incidentCount'] = 1;
+            countMap[entireName]['leaves'] = 1;
+
+            dleaves = countMap[divisionName]['leaves'];
+            dleaves ++;
+            countMap[divisionName]['leaves'] = dleaves;
+
+            bleaves = countMap[battalionLevelName]['leaves'];
+            bleaves ++;
+            countMap[battalionLevelName]['leaves'] = bleaves;
+
+            rootLeaves = countMap['Root']['leaves'];
+            rootLeaves ++;
+            countMap['Root']['leaves'] = rootLeaves;
+
+            nodes.add(entireName);
+          }
+          countArray.push(countMap);
+          return countMap;
+        }
+
+        function makeHierarchy(data) {
+          console.log(countMap);
+          console.log(nodes);
+          var array = [];
+          for(var k in countMap) {
+            currName = countMap[k]['name'];
+            array.push({
+            name : currName,
+            parent : countMap[k]['parent'],
+            incidentCount : countMap[k]['incidentCount'],
+            leaves : countMap[k]['leaves']
+            });
+
+
+          }
+          console.log(array);
+
+          root = d3.stratify()
+            .id(function(row) { return row.name; })
+            .parentId(function(row) {
+              return row.parent;
+            })
+          (array);
+          console.log(root);
+
+
+          return root;
+        }
+
+
+        function icicle(data) {
+          data.sort(function(a, b) {
+            return b.height - a.height || b.count - a.count;
+          });
+
+          data.sum(d => d.incidentCount)
+
+          // uses the "value" attribute (currently file size)
+          let layout = d3.partition().size([960 - 2 * pad, 500 - 2 * pad]);
+
+          layout(data);
+          plot = svg.append("g")
+            .attr("id", "plot")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("transform", translate(pad, pad+80));
+          plot.style("width", 960);
+          plot.style("height",500);
+
+          levelHeight = 500 / (levelNum + 1);
+
+          let rects = plot.selectAll("rect")
+            .data(data.descendants())
+            .enter()
+            .append("rect")
+            .attr("x", function(d) { return d.x0; })
+            .attr("y", function(d) { return (levelNum - 1 - d.height) * levelHeight; })
+            .attr("width", function(d) { return d.x1 - d.x0; })
+            .attr("height", function(d) { return levelHeight; })
+            .attr("id", function(d) { return d.data.name; })
+            .attr("class", "node")
+              .style('fill', d => color(d.data.incidentCount))
+              .style('stroke', 'silver')
+              .style("stroke-width", 3);
+          setupEvents(plot, rects, true);
+          return svg.node();
+        }
+
+        function toCartesian(r, theta) {
+          return {
+            x: r * Math.cos(theta),
+            y: r * Math.sin(theta)
+          };
+        }
+
+        function drawColorLegend() {
+          const legendWidth = 200;
+          const legendHeight = 20;
+
+          // place legend in its own group
+          const group = svg.append("g");
+          group.attr('id', 'color-legend');
+
+          // shift legend to appropriate position
+          group.attr('transform', translate(10, 50));
+
+          const title = group.append('text')
+            .attr('class', 'axis-title')
+            .text('Incident Count of Node');
+          title.attr('dx', 1000);
+          title.attr('dy', 50);
+
+          const legendLabelMin = group.append('text')
+            .text('0')
+            .attr('dx', 972)
+            .attr('dy', 75);
+
+          const legendLabelMax = group.append('text')
+            .text('153000')
+            .attr('dx', 1187)
+            .attr('dy', 75);
+
+          // lets draw the rectangle, but it won't have a fill just yet
+          const colorbox = group.append('rect')
+            .attr('x', 985)
+            .attr('y', 58)
+            .attr('width', legendWidth)
+            .attr('height', legendHeight)
+            .style('stroke','silver');
+
+          // get the domain first (we do not want the middle value from the diverging scale)
+          const colorDomain = [d3.min(color.domain()), d3.max(color.domain())];
+
+          // add a new scale to go from color tick to percent
+          percent = d3.scaleLinear()
+            .range([0, 100])
+            .domain(colorDomain);
+
+          // we have to first add gradients
+          const defs = svg.append('defs');
+
+          // add a color stop per data tick
+          // input  (ticks)   : [0.2, ..., 100, ..., 200.3]
+          // output (percents): [  0, ..., 50, ..., 100]
+          defs.append('linearGradient')
+            .attr('id', 'gradient')
+            .selectAll('stop')
+            .data(color.ticks())
+            .enter()
+            .append('stop')
+            .attr('offset', d => percent(d) + '%')
+            .attr('stop-color', d => color(d));
+
+            // draw the color rectangle with the gradient
+            colorbox.attr('fill', 'url(#gradient)');
+        }
+
+        function showTooltip(g, node) {
+          let gbox = g.node().getBBox();     // get bounding box of group BEFORE adding text
+          let nbox = node.node().getBBox();  // get bounding box of node
+
+          // calculate shift amount
+          let dx = nbox.width / 2;
+          let dy = nbox.height / 2;
+
+          // retrieve node attributes (calculate middle point)
+          let x = nbox.x + dx;
+          let y = nbox.y + dy;
+
+          // get data for node
+          let datum = node.datum();
+
+          // remove "java.base." from the node name
+          let name = datum.data.name;
+
+
+          // use node name and total size as tooltip text
+          let text = `${name} (Incident Count: ${numberFormat(datum.data.incidentCount)}, Leaves: ${numberFormat(datum.data.leaves)})`;
+
+          // create tooltip
+          let tooltip = g.append('text')
+            .text(text)
+            .attr('x', x)
+            .attr('y', y)
+            .attr('dy', -dy - 4) // shift upward above circle
+            .attr('text-anchor', 'middle') // anchor in the middle
+            .attr('id', 'tooltip')
+            .style('fill','black')
+            .style('stroke','silver');
+
+          // it is possible the tooltip will fall off the edge of the
+          // plot area. we can detect when this happens, and set the
+          // text anchor appropriately
+
+          // get bounding box for the text
+          let tbox = tooltip.node().getBBox();
+
+          // if text will fall off left side, anchor at start
+          if (tbox.x < gbox.x) {
+            tooltip.attr('text-anchor', 'start');
+            tooltip.attr('dx', -dx); // nudge text over from center
+          }
+          // if text will fall off right side, anchor at end
+          else if ((tbox.x + tbox.width) > (gbox.x + gbox.width)) {
+            tooltip.attr('text-anchor', 'end');
+            tooltip.attr('dx', dx);
+          }
+
+          // if text will fall off top side, place below circle instead
+          if (tbox.y < gbox.y) {
+            tooltip.attr('dy', dy + tbox.height);
+          }
+        }
+
+        function setupEvents(g, selection, raise) {
+          selection.on('mouseover.highlight', function(d) {
+            // https://github.com/d3/d3-hierarchy#node_path
+            // returns path from d3.select(this) node to selection.data()[0] root node
+            let path = d3.select(this).datum().path(selection.data()[0]);
+            console.log(path);
+            // select all of the nodes on the shortest path
+            let update = selection.data(path, nodes => nodes.id);
+
+            // highlight the selected nodes
+            update.classed('selected', true);
+
+            if (raise) {
+              update.raise()
+              .style("stroke", "skyblue")
+              .style("stroke-width", 5);
+            }
+          });
+
+          selection.on('mouseout.highlight', function(d) {
+            let path = d3.select(this).datum().path(selection.data()[0]);
+            let update = selection.data(path, node => node.data.name);
+            update.classed('selected', false);
+            update.style('stroke', 'silver')
+              .style("stroke-width", 3);
+          });
+
+          // show tooltip text on mouseover (hover)
+          selection.on('mouseover.tooltip', function(d) {
+            showTooltip(g, d3.select(this));
+          });
+
+          // remove tooltip text on mouseout
+          selection.on('mouseout.tooltip', function(d) {
+            g.select("#tooltip").remove();
+          });
+
+          selection.on('click', function(d) {
+            console.log("clicked! " + d.id);
+            console.log("\t" + d.descendants());
+            let followers = d.descendants();
+            d3.selectAll("#plot").transition().remove();
+            levelNum = d.height + 1;
+            console.log(levelNum);
+            icicle(d);
+        //    let followers = d.children;
+          //  let followers= selection.data(d.descendants(), nodes => nodes.id);
+
+            // highlight the selected nodes
+      //      update.classed('selected', true);
+
+
+
+
+    //        let followers = d.descendants();
+    //        console.log("followers: " + followers.children);
+
+
+          });
+        }
+
+
+        function translate(x, y) {
+          return 'translate(' + x + ',' + y + ')';
+        }
+
+        numberFormat = d3.format(".3~s");
+
         </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <h4>Instructions</h4>
 

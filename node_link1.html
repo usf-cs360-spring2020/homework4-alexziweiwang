@@ -33,8 +33,7 @@
   <nav class="navbar is-light" role="navigation" aria-label="main navigation">
     <div class="container">
       <div class="navbar-brand">
-        <!-- TODO: Change link to repository homepage if needed -->
-        <!-- TODO: Change which navbar-item is-active if needed -->
+
         <a class="navbar-item is-active" href="index.html">
           <span class="icon"><i class="fas fa-home"></i></span>
           <span>Home</span>
@@ -369,7 +368,7 @@ You can even put code into these pre blocks.
 
           let plot = svg.append("g")
             .attr("id", "plot")
-            .attr("transform", translate(pad, pad));
+            .attr("transform", translate(pad + 90, pad));
 
           let line = d3.line()
             .curve(d3.curveLinear)
@@ -382,6 +381,7 @@ You can even put code into these pre blocks.
 
           drawLinks(plot.append("g"), data.links(), generator);
           drawNodes(plot.append("g"), data.descendants(), true);
+          console.log(data.descendants());
           return svg.node();
         }
 
@@ -405,7 +405,8 @@ You can even put code into these pre blocks.
               .attr('cy', d => d.y + 240)
               .attr('id', d => d.data.name)
               .attr('class', 'node')
-              .style('fill', d => color(d.data.incidentCount));
+              .style('fill', d => color(d.data.incidentCount))
+              .style('stroke','silver');
 
           setupEvents(g, circles, raise);
         }
@@ -431,25 +432,26 @@ You can even put code into these pre blocks.
           const title = group.append('text')
             .attr('class', 'axis-title')
             .text('Incident Count of Node');
-          title.attr('dx', 650);
+          title.attr('dx', 710);
           title.attr('dy', 50);
 
           const legendLabelMin = group.append('text')
             .text('0')
-            .attr('dx', 620)
+            .attr('dx', 679)
             .attr('dy', 75);
 
           const legendLabelMax = group.append('text')
             .text('153000')
-            .attr('dx', 837)
+            .attr('dx', 895)
             .attr('dy', 75);
 
           // lets draw the rectangle, but it won't have a fill just yet
           const colorbox = group.append('rect')
-            .attr('x', 635)
+            .attr('x', 693)
             .attr('y', 58)
             .attr('width', legendWidth)
-            .attr('height', legendHeight);
+            .attr('height', legendHeight)
+            .style('stroke','silver');
 
           // get the domain first (we do not want the middle value from the diverging scale)
           const colorDomain = [d3.min(color.domain()), d3.max(color.domain())];
@@ -535,19 +537,22 @@ You can even put code into these pre blocks.
         }
 
         function setupEvents(g, selection, raise) {
+
           selection.on('mouseover.highlight', function(d) {
             // https://github.com/d3/d3-hierarchy#node_path
             // returns path from d3.select(this) node to selection.data()[0] root node
             let path = d3.select(this).datum().path(selection.data()[0]);
-
+            console.log(path);
             // select all of the nodes on the shortest path
-            let update = selection.data(path, node => node.data.name);
+            let update = selection.data(path, nodes => nodes.id);
 
             // highlight the selected nodes
             update.classed('selected', true);
 
             if (raise) {
-              update.raise();
+              update.raise()
+              .style("stroke", "skyblue")
+              .style("stroke-width", 5);
             }
           });
 
@@ -555,6 +560,7 @@ You can even put code into these pre blocks.
             let path = d3.select(this).datum().path(selection.data()[0]);
             let update = selection.data(path, node => node.data.name);
             update.classed('selected', false);
+            update.style("stroke", null);
           });
 
           // show tooltip text on mouseover (hover)
