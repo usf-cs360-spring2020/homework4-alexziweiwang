@@ -12,6 +12,7 @@
 
     <!-- Load Font Awesome 5 (free) icons -->
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
   </head>
 
   <body>
@@ -21,8 +22,8 @@
   <section class="hero is-primary is-bold">
     <div class="hero-body">
       <div class="container">
-        <h1 class="title">Dataset</h1>
-        <h2 class="subtitle">..</h2>
+        <h1 class="title">Dataset Page</h1>
+        <h2 class="subtitle">Description of dataset and data wrangling</h2>
       </div>
     </div>
   </section>
@@ -87,59 +88,46 @@
       <!-- Begin page content -->
       <div class="content">
         <h1 class="title">
-          <!-- TODO: Change page title -->
-          Page Title
+          Dataset: Fire Department Calls for Service
         </h1>
         <p class="subtitle">
-          <!-- TODO: Change page subtitle -->
-          Page Subtitle
+          From DataSF
         </p>
 
-        <p>This would be an excellent place to describe what this page is for, what to find in different sections, describe any motivation or theme behind your visualizations, and so on.</p>
+        <p>
+        Fire Calls-For-Service includes all fire units responses to calls. Each record includes the call number, incident number, address, unit identifier, call type, and disposition. All relevant time intervals are also included. Because this dataset is based on responses, and since most calls involved multiple units, there are multiple records for each call number. Addresses are associated with a block number, intersection or call box, not a specific address.
+        </p>
 
-        <p>You should not use this template unless you intend to customize it. Make it your own. Keep in mind this simple template is over 300 lines! You can see other examples of websites using Bulma at their showcase: <a href="https://bulma.io/expo/">bulma.io/expo/</a>.</p>
 
-        <h2 id="data">Data</h2>
+        <p><strong>Source:</strong> <a href="https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3" target = _blank>Fire Department Calls for Service Dataset</a></p>
+        <p><strong>Size:</strong> 5.26M Rows; 34 Columns; Each row is a response</p>
+        <p><strong>License:</strong> <a href="https://opendatacommons.org/licenses/pddl/1.0/" target = _blank> Open Data Commons Public Domain Dedication and License</a></p>
+        <p><strong>Retrieve Date:</strong> April 18th, 2020</p>
 
-        <p>Include some detailed information about the dataset here. You should <a href="#">add a link</a> to the original dataset. You might also want to quote the license:</p>
-
-        <blockquote>
-          <p>
-            "This data is made available under the Public Domain Dedication and License v1.0 whose full text can be found at: <a href="http://www.opendatacommons.org/licenses/pddl/1.0/">www.opendatacommons.org/licenses/pddl/1.0/</a>"
-          </p>
-          <cite>Put a citation here, possibly link to the dataset license information directly.</cite>
-        </blockquote>
-
-        <p>In addition to including a link to the source and license, you should describe the data. You might want a list of some sort to enumerate the different types of columns:</p>
-
+        <strong>Relevant Columns:</strong>
         <ol>
-          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>
+          <li><strong>Incident Number:</strong> A unique 8-digit number assigned by DEM to this Fire incident</li>
 
-          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>
+          <li><strong>Battalion:</strong> Emergency Response District (There are 9 Fire Emergency Response Districts)</li>
 
-          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>
-
-          <li><strong>Column Name:</strong> Give a description of the column, including its type and possible range of values.</li>
+          <li><strong>Station Area:</strong> Fire Station First Response Area associated with the address of the incident</li>
         </ol>
 
-        <p>This will of course differ depending on the assignment and data.</p>
+        <strong>Supplement Information:</strong> <a href="https://sf-fire.org/fire-station-locations">Fire Station Locations & Division and Battalion Stations at sf-fire.org</a>
+          <ol>
+            The division-battalion-station hierarchy structure was built based on information from this webpage</ol>
 
         <h3 id="wrangling">Wrangling</h3>
-
-        <p>Perhaps you had to do some data wrangling to the original dataset to prepare it for visualization. This would be a great place to discuss some of that wrangling.
-
-        <pre>
-You can even put code into these pre blocks.
-  It will preserve whitespace.
-    That is helpful for formatted code.
-        </pre>
-
-        <p>You can alternatively embed a Gist if you want. There is an "embed" button on <a href="https://gist.github.com/octocat/6cad326836d38bd3a7ae">the Gist page</a> and results in something like this:</p>
-
-        <script src="https://gist.github.com/octocat/6cad326836d38bd3a7ae.js"></script>
-
-
-
+          <strong> On the website user interface</strong>
+          <li>Firstly the dataset was filtered to be only for the year of 2019, which is between Janurary 1st 2019 and January 1st 2020.</li>
+          <li>Then the dataset was grouped by "incident number" to make each row to be unique.</li>
+          <strong> In the code in javascript</strong>
+          <li> After creating a .csv file, use javascript to read each row and use an Object array as a map, to record and count incident number for each station, battalion and division.</li>
+          <li> When recording into the map, manually encode the division-battalion-station structure from <a href="https://sf-fire.org/fire-station-locations">This webpage at sf-fire.org</a>.</li>
+          <li> Add "Root" node into the map for further hierarchy operations.</li>
+          <li> After recording incident counts, push all the information as nodes into an array. With d3.stratify(), the hierarchy would be ready.</li>
+          <li> Then further functions for hierarchy data could be applied.</li>
+          <p> (Detailed steps with code would be in page of specific visualizations)</p>
       </div>
       <!-- End page content -->
     </div>

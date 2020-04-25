@@ -10,8 +10,10 @@
     <!-- https://bulma.io/ -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
 
+
     <!-- Load Font Awesome 5 (free) icons -->
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
   </head>
 
   <body>
@@ -33,8 +35,7 @@
   <nav class="navbar is-light" role="navigation" aria-label="main navigation">
     <div class="container">
       <div class="navbar-brand">
-        <!-- TODO: Change link to repository homepage if needed -->
-        <!-- TODO: Change which navbar-item is-active if needed -->
+
         <a class="navbar-item is-active" href="index.html">
           <span class="icon"><i class="fas fa-home"></i></span>
           <span>Home</span>
@@ -79,12 +80,12 @@
 
         <!-- Right navbar items -->
         <div class="navbar-end">
-          <a class="navbar-item" href="#about" title="About">
+          <a class="navbar-item" href="#grade" title="About">
             <span class="icon"><i class="fas fa-tasks"></i></span>
             <span>Grade</span>
           </a>
 
-          <a class="navbar-item" href="aboutpage.html" title="About">
+          <a class="navbar-item" href="#about" title="About">
             <span class="icon"><i class="fas fa-info-circle"></i></span>
             <span>About</span>
           </a>
@@ -99,23 +100,20 @@
       <!-- Begin page content -->
       <div class="content">
         <h1 class="title">
-          <!-- TODO: Change page title -->
-          Page Title
+          Fire Department Calls for Service: Incident counts of each station, battalion and division
         </h1>
         <p class="subtitle">
-          <!-- TODO: Change page subtitle -->
-          Page Subtitle
+          Node link diagram & Space filling diagram
         </p>
 
-        <p>This would be an excellent place to describe what this page is for, what to find in different sections, describe any motivation or theme behind your visualizations, and so on.</p>
-
-        <p>You should not use this template unless you intend to customize it. Make it your own. Keep in mind this simple template is over 300 lines! You can see other examples of websites using Bulma at their showcase: <a href="https://bulma.io/expo/">bulma.io/expo/</a>.</p>
-
-  
+        <p> As one of the most essential departments of San Francisco, for SFFD, the management of the responsible levels of units are very important.</p>
+        <p> There are many fire calls each day, and many aspects of those incidents were recorded.</p>
+        <p> This visualization focuses on the incident count distribution among stations, and their upper battalion, along with the upper divisions.</p>
+        <p> Therefore, two hierarchical data visualization were implemented, one is node link diagram, and the other is space filling diagram.</p>
+        <p> The navigate bar above would be the entries of the two data visualizations.</p>
 
         <h2 id="grade">Grade</h2>
 
-        <!-- TODO: Remove custom style if no longer needed -->
         <style>
           table.grades tbody tr td:nth-child(1),
           table.grades tbody tr td:nth-child(2) {
@@ -123,7 +121,6 @@
           }
         </style>
 
-        <!-- TODO: Change or remove table -->
         <!-- https://bulma.io/documentation/elements/table/ -->
         <table class="table is-hoverable is-bordered grades">
           <thead>
@@ -138,25 +135,25 @@
             <tr>
               <td>D</td>
               <td><i class="has-text-success fas fa-check-circle"></i></td>
-              <td>Discussion of how this grade level was satisfied. Exactly how this section should look will depend on the assignment in question. There is no requirement for formatting in this way. This is just an example of what a table element might look like for this informaiton.</td>
+              <td>The data was wrangled into a hierarchical format that can be interpreted by  d3.stratify(). The hierarchy has 4 levels including the root and leaf nodes. Each leaf nodes has an attribute of incident count.</td>
             </tr>
 
             <tr>
               <td>C</td>
               <td><i class="has-text-success fas fa-check-circle"></i></td>
-              <td>Discussion of how this grade level was satisfied.</td>
+              <td>Completed the D-level functionality, and implemented a node link visualization using d3.tree(). The node attribute, incident count, was encoded in color in diverging scale. Nodes have details-on-demand interactivity showing the node label, and hightling current node and all ancesters.</td>
             </tr>
 
             <tr>
               <td>B</td>
               <td><i class="has-text-success fas fa-check-circle"></i></td>
-              <td>Discussion of how this grade level was satisfied.</td>
+              <td>Completed the C-level functionality, and implemented a space-filling visualization using d3.partition(). The node attribute, incident count, was encoded in color in diverging scale. Nodes have details-on-demand interactivity showing the node label, and hightling current node and all ancesters.</td>
             </tr>
 
             <tr>
               <td>A</td>
               <td><i class="has-text-success fas fa-check-circle"></i></td>
-              <td>Discussion of how this grade level was not satisfied.</td>
+              <td>Completed the B-level functionality, and implemented a filtering/zooming interactivity in the space filling diagram. </td>
             </tr>
           </tbody>
 
