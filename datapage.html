@@ -111,17 +111,17 @@
           <li><strong>Station Area:</strong> Fire Station First Response Area associated with the address of the incident</li>
         </ol>
 
-        <strong>Supplement Information:</strong> <a href="https://sf-fire.org/fire-station-locations">Fire Station Locations & Division and Battalion Stations at sf-fire.org</a>
-          <ol>
-            The division-battalion-station hierarchy structure was built based on information from this webpage</ol>
+        <strong>Supplement Information:</strong> <a href="https://sf-fire.org/fire-station-locations" target=_blank>Fire Station Locations & Division and Battalion Stations at sf-fire.org</a>
+
+            (The division-battalion-station hierarchy structure was built based on information from this webpage)
 
         <h3 id="wrangling">Wrangling</h3>
           <strong> On the website user interface</strong>
           <li>Firstly the dataset was filtered to be only for the year of 2019, which is between Janurary 1st 2019 and January 1st 2020.</li>
-          <li>Then the dataset was grouped by "incident number" to make each row to be unique.</li>
+          <li>Then the dataset was grouped by "incident number" to make every row to be unique incidents.</li>
           <strong> In the code in javascript</strong>
           <li> After creating a .csv file, use javascript to read each row and use an Object array as a map, to record and count incident number for each station, battalion and division.</li>
-          <li> When recording into the map, manually encode the division-battalion-station structure from <a href="https://sf-fire.org/fire-station-locations">This webpage at sf-fire.org</a>.</li>
+          <li> When recording into the map, manually encode the division-battalion-station structure from <a href="https://sf-fire.org/fire-station-locations">this supplement information webpage at sf-fire.org</a>.</li>
           <li> Add "Root" node into the map for further hierarchy operations.</li>
           <li> After recording incident counts, push all the information as nodes into an array. With d3.stratify(), the hierarchy would be ready.</li>
           <li> Then further functions for hierarchy data could be applied.</li>
