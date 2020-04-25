@@ -174,12 +174,7 @@ You can even put code into these pre blocks.
         svg.attr("y", 0);
         svg.style("width", width);
         svg.style("height", height);
-/*        let plot = svg.append("g")
-          .attr("id", "plot")
-          .attr("transform", translate(pad, pad));
-        plot.style("width", 960);
-        plot.style("height",500);
-*/
+
         countMap['Root'] = {};
         countMap['Root']['name'] = 'Root';
         countMap['Root']['parent'] = "";
@@ -359,6 +354,10 @@ You can even put code into these pre blocks.
 
 
         function icicle(data) {
+          console.log("curr Level num: " + levelNum);
+          d3.selectAll("#plot").remove();
+
+
           data.sort(function(a, b) {
             return b.height - a.height || b.count - a.count;
           });
@@ -373,18 +372,21 @@ You can even put code into these pre blocks.
             .attr("id", "plot")
             .attr("x", 0)
             .attr("y", 0)
-            .attr("transform", translate(pad, pad+80));
+            .attr("transform", translate(pad, pad+120));
           plot.style("width", 960);
           plot.style("height",500);
 
-          levelHeight = 500 / (levelNum + 1);
+          levelHeight = 500 / levelNum;
 
           let rects = plot.selectAll("rect")
             .data(data.descendants())
             .enter()
             .append("rect")
             .attr("x", function(d) { return d.x0; })
-            .attr("y", function(d) { return (levelNum - 1 - d.height) * levelHeight; })
+            .attr("y", function(d) {
+              console.log('ldrawing y: levelNum' + levelNum + ', ' + levelHeight);
+
+              return (levelNum - 1 - d.height) * levelHeight; })
             .attr("width", function(d) { return d.x1 - d.x0; })
             .attr("height", function(d) { return levelHeight; })
             .attr("id", function(d) { return d.data.name; })
@@ -393,6 +395,14 @@ You can even put code into these pre blocks.
               .style('stroke', 'silver')
               .style("stroke-width", 3);
           setupEvents(plot, rects, true);
+
+          if(levelNum == 4) {
+            d3.selectAll("#backButton").remove();
+            d3.selectAll("#backText").remove();
+          } else {
+            backToPreButton(data.parent);
+          }
+
           return svg.node();
         }
 
@@ -465,6 +475,41 @@ You can even put code into these pre blocks.
             colorbox.attr('fill', 'url(#gradient)');
         }
 
+        function backToPreButton(parentNode) {
+          levelNum = parentNode.height + 1;
+
+          buttonBack = svg.append('rect')
+            .attr('id', 'backButton')
+            .attr('x', 16)
+            .attr('y', 90)
+            .attr('width', 270)
+            .attr('height', 25)
+            .style('fill', 'Tan')
+            .style('stroke', 'silver')
+            .style('stroke-width', 3.5);
+
+          buttonText = svg.append('text')
+            .attr('id', 'backText')
+            .text('Back to parent level')
+            .attr('x', 85)
+            .attr('y', 108)
+            .style('fill', 'black');
+
+
+          buttonBack.on("click", function (d) {
+            console.log('back up');
+            icicle(parentNode);
+          });
+
+          buttonText.on("click", function (d) {
+            console.log('back up');
+
+            icicle(parentNode);
+          });
+
+
+        }
+
         function showTooltip(g, node) {
           let gbox = g.node().getBBox();     // get bounding box of group BEFORE adding text
           let nbox = node.node().getBBox();  // get bounding box of node
@@ -495,8 +540,11 @@ You can even put code into these pre blocks.
             .attr('dy', -dy - 4) // shift upward above circle
             .attr('text-anchor', 'middle') // anchor in the middle
             .attr('id', 'tooltip')
-            .style('fill','black')
-            .style('stroke','silver');
+            .style('fill','silver')
+            .attr("font-weight",700)
+            .style('stroke', 'midnightblue')
+             .style('stroke-width', 1);
+
 
           // it is possible the tooltip will fall off the edge of the
           // plot area. we can detect when this happens, and set the
@@ -563,23 +611,9 @@ You can even put code into these pre blocks.
             console.log("clicked! " + d.id);
             console.log("\t" + d.descendants());
             let followers = d.descendants();
-            d3.selectAll("#plot").transition().remove();
             levelNum = d.height + 1;
-            console.log(levelNum);
+            console.log('further ..');
             icicle(d);
-        //    let followers = d.children;
-          //  let followers= selection.data(d.descendants(), nodes => nodes.id);
-
-            // highlight the selected nodes
-      //      update.classed('selected', true);
-
-
-
-
-    //        let followers = d.descendants();
-    //        console.log("followers: " + followers.children);
-
-
           });
         }
 
